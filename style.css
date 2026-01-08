@@ -21,3 +21,27 @@ button {
     justify-content: space-between;
     align-items: center;
 }
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 15px;
+}
+
+.day {
+    background: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.day.done {
+    background: #b7f5c3;
+}
+
+.day.empty {
+    background: transparent;
+    cursor: default;
+}

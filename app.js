@@ -38,12 +38,17 @@ function renderHabits() {
     habits.forEach(habit => {
         const habitDiv = document.createElement('div');
 
-        habitDiv.innerHTML = `
-            <span>${habit.name}</span>
-            <button onclick="selectHabit(${habit.id})">
-                Открыть календарь
-            </button>
-        `;
+    habitDiv.innerHTML = `
+     <span>${habit.name}</span>
+        <div>
+        <button onclick="selectHabit(${habit.id})">
+            📅
+        </button>
+        <button onclick="deleteHabit(${habit.id})">
+            🗑️
+        </button>
+     </div>
+    `;
 
         habitsContainer.appendChild(habitDiv);
     });
@@ -113,6 +118,21 @@ function renderCalendar() {
 
         calendarEl.appendChild(dayEl);
     }
+}
+function deleteHabit(id) {
+    const confirmDelete = confirm('Удалить привычку?');
+
+    if (!confirmDelete) return;
+
+    habits = habits.filter(habit => habit.id !== id);
+
+    if (selectedHabitId === id) {
+        selectedHabitId = null;
+        calendarEl.innerHTML = '<p>Привычка удалена</p>';
+    }
+
+    saveHabits();
+    renderHabits();
 }
 
 

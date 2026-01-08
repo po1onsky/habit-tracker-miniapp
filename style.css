@@ -45,3 +45,8 @@ button {
     background: transparent;
     cursor: default;
 }
+
+#habits div > div {
+    display: flex;
+    gap: 5px;
+}

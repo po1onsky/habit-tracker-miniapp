@@ -14,13 +14,23 @@
 
     <h1 id="username">Привет!</h1>
 
+    <div id="summary">
+    Общий прогресс: <strong id="totalProgress">0%</strong>
+    </div>
+
     <div id="habits"></div>
 
     <button id="addHabitBtn">Добавить привычку</button>
 
     <h2>Календарь</h2>
-    
-    <div id="calendar"></div>
+
+    <div id="calendar-controls">
+        <button id="prevMonth">◀</button>
+        <span id="currentMonthLabel"></span>
+        <button id="nextMonth">▶</button>
+    </div>
+
+<div id="calendar"></div>
 
     <!-- Подключаем наш JS -->
     <script src="app.js"></script>

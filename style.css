@@ -50,3 +50,38 @@ button {
     display: flex;
     gap: 5px;
 }
+
+#calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#calendar-controls button {
+    padding: 5px 10px;
+}
+
+small {
+    margin-left: 8px;
+    color: #ff6b00;
+    font-weight: bold;
+}
+
+small {
+    margin-left: 8px;
+    font-size: 12px;
+}
+
+.day.today {
+    border: 2px solid #4f46e5;
+    font-weight: bold;
+}
+
+#summary {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}

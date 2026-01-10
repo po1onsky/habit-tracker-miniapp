@@ -1,5 +1,26 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
+tg.expand();
+tg.onEvent('themeChanged', applyTheme);
+
+function applyTheme() {
+    const theme = tg.colorScheme; // light | dark
+    document.body.dataset.theme = theme;
+}
+
+applyTheme();
+
+
+const user = tg.initDataUnsafe?.user;
+
+if (user) {
+    console.log('Пользователь:', user);
+}
+if (user) {
+    document.getElementById('username').innerText =
+        `Привет, ${user.first_name}!`;
+}
+
 
 function getToday() {
     return new Date().toISOString().split('T')[0];
@@ -26,14 +47,31 @@ function updateMonthLabel() {
         year: 'numeric'
     });
 }
+function saveHabits() {
+    tg.CloudStorage.setItem('habits', JSON.stringify(habits));
+}
 
+function loadHabits() {
+    tg.CloudStorage.getItem('habits', (err, data) => {
+        if (err || !data) return;
+
+        habits = JSON.parse(data);
+        renderHabits();
+    });
+}
+
+function applyTelegramColors() {
+    const p = tg.themeParams;
+    if (!p.bg_color) return;
+
+    document.body.style.background = p.bg_color;
+}
+
+applyTelegramColors();
+tg.onEvent('themeChanged', applyTelegramColors);
 
 // ---- Пользователь ----
-const user = tg.initDataUnsafe?.user;
-if (user) {
-    document.getElementById('username').innerText =
-        `Привет, ${user.first_name}!`;
-}
+
 
 // ---- Данные ----
 let habits = JSON.parse(localStorage.getItem('habits')) || [];
@@ -41,6 +79,8 @@ let habits = JSON.parse(localStorage.getItem('habits')) || [];
 // ---- Элементы ----
 const habitsContainer = document.getElementById('habits');
 const addHabitBtn = document.getElementById('addHabitBtn');
+const mainButton = tg.MainButton;
+
 
 document.getElementById('prevMonth').addEventListener('click', () => {
     currentMonth--;
@@ -86,13 +126,14 @@ function renderHabits() {
         <small>🔥 ${streak}</small>
         <small>📊 ${completion}%</small>
     </span>
-    <div>
-        <button onclick="selectHabit(${habit.id})">📅</button>
-        <button onclick="deleteHabit(${habit.id})">🗑️</button>
+    <div class="actions">
+        <button class="open-btn" data-id="${habit.id}">📅</button>
+        <button class="delete-btn" data-id="${habit.id}">🗑️</button>
     </div>
 `;
     habitsContainer.appendChild(habitDiv);
 });
+
     renderSummary()
 }
 
@@ -101,13 +142,14 @@ function renderHabits() {
 function selectHabit(id) {
     selectedHabitId = id;
     renderCalendar();
+    mainButton.setText('Отметить сегодня');
+    mainButton.show();
+    mainButton.hide();
+
 }
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth(); // 0–11
 
-function saveHabits() {
-    localStorage.setItem('habits', JSON.stringify(habits));
-}
 
 // ---- Добавление привычки ----
 addHabitBtn.addEventListener('click', () => {
@@ -251,6 +293,31 @@ function renderSummary() {
     totalProgressEl.innerText = `${calculateTotalProgress()}%`;
 }
 
+habitsContainer.addEventListener('click', (e) => {
+    const target = e.target;
+
+    if (target.classList.contains('open-btn')) {
+        const id = Number(target.dataset.id);
+        selectHabit(id);
+    }
+
+    if (target.classList.contains('delete-btn')) {
+        const id = Number(target.dataset.id);
+        deleteHabit(id);
+    }
+});
+
+mainButton.onClick(() => {
+    if (!selectedHabitId) return;
+
+    const today = getToday();
+    toggleHabitDay(selectedHabitId, today);
+
+    renderCalendar();
+    renderHabits();
+    saveHabits();
+});
 
 // ---- Первый рендер ----
+loadHabits();
 renderHabits();
